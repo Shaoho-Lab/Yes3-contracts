@@ -18,9 +18,6 @@ contract LyonPrompt is ILyonPrompt {
     mapping(uint256 => mapping(uint256 => PromptInfo)) private _prompt;
     mapping(uint256 => uint256) private _currentIndex;
 
-    mapping(address => Prompt[]) private _requested;
-    mapping(address => Prompt[]) private _replied;
-
     constructor() {
         _name = "Lyon Prompt";
         _symbol = "LYN";
@@ -117,10 +114,6 @@ contract LyonPrompt is ILyonPrompt {
             interfaceId == 0x5b5e139f; // ERC165 interface ID for ERC721Metadata.
     }
 
-    function balanceOf(address owner) external view returns (uint256 balance) {
-        return _requested[owner].length;
-    }
-
     function ownerOf(Prompt calldata promptId)
         external
         view
@@ -140,7 +133,6 @@ contract LyonPrompt is ILyonPrompt {
         _prompt[templateId][id].question = question;
         _prompt[templateId][id].context = context;
 
-        _requested[to].push(Prompt(templateId, id, true));
         _currentIndex[templateId]++;
         emit PromptMinted(templateId, id, to);
     }
@@ -163,21 +155,6 @@ contract LyonPrompt is ILyonPrompt {
         emit RepliedToPrompt(promptId.templateId, promptId.id, _prompt[promptId.templateId][promptId.id].promptOwner, _prompt[promptId.templateId][promptId.id].question, replierName, replyDetail);
     }
 
-    function queryAllRequested(address owner)
-        external
-        view
-        returns (Prompt[] memory)
-    {
-        return _requested[owner];
-    }
-
-    function queryAllEndorsed(address owner)
-        external
-        view
-        returns (Prompt[] memory)
-    {
-        return _replied[owner];
-    }
 
     function queryAllRepliesByPrompt(Prompt calldata promptId)
         external
