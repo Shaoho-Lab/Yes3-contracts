@@ -209,7 +209,7 @@ contract LyonPrompt is ILyonPrompt {
         delete _prompt[promptId.templateId][promptId.id];
         for (uint256 i = 0; i < _promptByOwner[promptInfo.promptOwner].length; i++) {
             if (_promptByOwner[promptInfo.promptOwner][i].id == promptId.id) {
-                _promptByOwner[promptInfo.promptOwner][i] = _promptByOwner[promptInfo.promptOwner][_requested[promptInfo.promptOwner].length - 1];
+                _promptByOwner[promptInfo.promptOwner][i] = _promptByOwner[promptInfo.promptOwner][_promptByOwner[promptInfo.promptOwner].length - 1];
                 _promptByOwner[promptInfo.promptOwner].pop();
                 break;
             }
