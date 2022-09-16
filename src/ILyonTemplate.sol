@@ -169,7 +169,7 @@ interface ILyonTemplate {
         address to,
         uint256 tokenId,
         bytes calldata data
-    ) external payable;
+    ) external;
 
     /**
      * @dev Equivalent to `safeTransferFrom(from, to, tokenId, '')`.
@@ -178,7 +178,7 @@ interface ILyonTemplate {
         address from,
         address to,
         uint256 tokenId
-    ) external payable;
+    ) external;
 
     /**
      * @dev Transfers `tokenId` from `from` to `to`.
@@ -200,7 +200,7 @@ interface ILyonTemplate {
         address from,
         address to,
         uint256 tokenId
-    ) external payable;
+    ) external;
 
     /**
      * @dev Gives permission to `to` to transfer `tokenId` token to another account.
@@ -216,7 +216,7 @@ interface ILyonTemplate {
      *
      * Emits an {Approval} event.
      */
-    function approve(address to, uint256 tokenId) external payable;
+    function approve(address to, uint256 tokenId) external;
 
     /**
      * @dev Approve or remove `operator` as an operator for the caller.
@@ -265,10 +265,5 @@ interface ILyonTemplate {
      * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
     function tokenURI(uint256 tokenId) external view returns (string memory);
-
-    /**
-     * @dev Sets the Uniform Resource Identifier (URI) for `tokenId` token.
-     */
-     function setTokenURI(uint256 tokenId, string calldata uri) external;
 
 }
