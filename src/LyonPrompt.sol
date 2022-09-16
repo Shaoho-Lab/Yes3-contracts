@@ -129,19 +129,20 @@ contract LyonPrompt is ILyonPrompt {
         return _prompt[promptId.templateId][promptId.id].promptOwner;
     }
 
-    function _mint(Prompt calldata promptId, string calldata question, string calldata context, address to) internal {
+    function _mint(uint256 templateId, string calldata question, string calldata context, address to) external {
         require(to != address(0), "Cannot mint to the zero address");
         require(
-            _prompt[promptId.templateId][promptId.id].promptOwner == address(0),
+            _prompt[templateId][_currentIndex[templateId]++].promptOwner == address(0),
             "Token already minted"
         );
+        uint256 id = _currentIndex[templateId];
+        _prompt[templateId][id].promptOwner = to;
+        _prompt[templateId][id].question = question;
+        _prompt[templateId][id].context = context;
 
-        _prompt[promptId.templateId][promptId.id].promptOwner = to;
-        _prompt[promptId.templateId][promptId.id].question = question;
-        _prompt[promptId.templateId][promptId.id].context = context;
-
-        _requested[to].push(promptId);
-        emit SBTMinted(promptId.templateId, promptId.id, to);
+        _requested[to].push(Prompt(templateId, id, true));
+        _currentIndex[templateId]++;
+        emit SBTMinted(templateId, id, to);
     }
 
     /**
