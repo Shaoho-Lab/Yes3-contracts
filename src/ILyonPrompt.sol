@@ -74,8 +74,6 @@ interface ILyonPrompt {
         uint256 templateId;
         // The ID of current prompt. 第几个用这个template问问题的
         uint256 id;
-        // Whether the token has been burned.
-        bool exists;
     }
 
     struct PromptInfo {
@@ -164,6 +162,10 @@ interface ILyonPrompt {
         bool approved
     );
 
+    /**
+     * @dev Returns the number of tokens in `owner`'s account.
+     */
+    function balanceOf(address owner) external view returns (uint256 balance);
 
     /**
      * @dev Returns the owner of the `tokenId` token.

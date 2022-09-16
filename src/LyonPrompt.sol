@@ -18,6 +18,9 @@ contract LyonPrompt is ILyonPrompt {
     mapping(uint256 => mapping(uint256 => PromptInfo)) private _prompt;
     mapping(uint256 => uint256) private _currentIndex;
 
+    mapping(address => Prompt[]) private _promptByOwner;
+    mapping(address => Prompt[]) private _promptByReplier;
+
     constructor() {
         _name = "Lyon Prompt";
         _symbol = "LYN";
@@ -30,6 +33,11 @@ contract LyonPrompt is ILyonPrompt {
     function symbol() external view returns (string memory) {
         return _symbol;
     }
+
+    function balanceOf(address owner) external view returns (uint256 balance) {
+        return _promptByOwner[owner].length;
+    }
+
 
     function tokenURI(Prompt calldata promptId)
         external
@@ -133,7 +141,8 @@ contract LyonPrompt is ILyonPrompt {
         _prompt[templateId][id].question = question;
         _prompt[templateId][id].context = context;
 
-        _currentIndex[templateId]++;
+        _promptByOwner[to].push(Prompt(templateId, id, true));
+
         emit PromptMinted(templateId, id, to);
     }
 
@@ -143,19 +152,33 @@ contract LyonPrompt is ILyonPrompt {
     function replyPrompt(Prompt calldata promptId, address replierAddr, string calldata replierName, string calldata replyDetail, string calldata comment,
     bytes32 signature) external 
     {
-        require(msg.sender == ADMIN, "Only admin can update for now");
         ReplyInfo memory replyInfo = ReplyInfo(replierName, replyDetail, comment, signature, block.timestamp);
         // PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
         // promptInfo.replies[replierAddr] = replyInfo;
         // promptInfo.keys.push(replierAddr);
         _prompt[promptId.templateId][promptId.id].replies[replierAddr] = replyInfo;
         _prompt[promptId.templateId][promptId.id].keys.push(replierAddr);
-
+        _promptByReplier[replierAddr].push(promptId);
         // emit AnswerUpdated(promptId.templateId, promptId.id, promptInfo.promptOwner, promptInfo.question, replierName, replyDetail);
         emit RepliedToPrompt(promptId.templateId, promptId.id, _prompt[promptId.templateId][promptId.id].promptOwner, _prompt[promptId.templateId][promptId.id].question, replierName, replyDetail);
     }
 
+    function queryAllPromptByAddr(address owner)
+        external
+        view
+        returns (Prompt[] memory)
+    {
+        return _promptByOwner[owner];
+    }
 
+    function queryAllRepliesByAddr(address owner)
+        external
+        view
+        returns (Prompt[] memory)
+    {
+        return _promptByReplier[owner];
+    }
+    
     function queryAllRepliesByPrompt(Prompt calldata promptId)
         external
         view
@@ -169,6 +192,29 @@ contract LyonPrompt is ILyonPrompt {
         return replies;
     }
 
+    function burnReplies (Prompt calldata promptId, address replier) external {
+        PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
+        delete promptInfo.replies[replier];
+        for (uint256 i = 0; i < promptInfo.keys.length; i++) {
+            if (promptInfo.keys[i] == replier) {
+                promptInfo.keys[i] = promptInfo.keys[promptInfo.keys.length - 1];
+                promptInfo.keys.pop();
+                break;
+            }
+        }
+    }
+
+    function burnPrompt (Prompt calldata promptId) external {
+        PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
+        delete _prompt[promptId.templateId][promptId.id];
+        for (uint256 i = 0; i < _promptByOwner[promptInfo.promptOwner].length; i++) {
+            if (_promptByOwner[promptInfo.promptOwner][i].id == promptId.id) {
+                _promptByOwner[promptInfo.promptOwner][i] = _promptByOwner[promptInfo.promptOwner][_requested[promptInfo.promptOwner].length - 1];
+                _promptByOwner[promptInfo.promptOwner].pop();
+                break;
+            }
+        }
+    }
     /**
      * @dev Converts a `uint256` to its ASCII `string` decimal representation.
      */
