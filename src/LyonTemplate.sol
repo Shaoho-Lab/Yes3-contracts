@@ -31,11 +31,4 @@ contract template is ERC721("Lyon Protocol","LYN"){
             ++promptCount[promptId]; 
         }
     }
-
-    // for question update, category change..
-    /**
-     * function _setTemplateURI(uint256 tokenId, string memory _templateURI) internal virtual {
-        require(_exists(tokenId), "...");
-    }
-    **/
 }

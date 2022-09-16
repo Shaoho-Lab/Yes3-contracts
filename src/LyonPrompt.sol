@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Creator: Lyon House
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.17;
 
 import "./ILyonPrompt.sol";
 import "./Base64.sol";
@@ -40,7 +40,7 @@ contract LyonPrompt is ILyonPrompt {
         returns (string memory)
     {
         PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
-        require(promptInfo.owner != address(0), "URIQueryForNonexistentToken");
+        require(promptInfo.promptOwner != address(0), "URIQueryForNonexistentToken");
 
         string[] memory parts;
         parts[
@@ -50,9 +50,9 @@ contract LyonPrompt is ILyonPrompt {
         parts[2] = '</text><text x="10" y="40" class="base">';
         for (uint256 i = 0; i < promptInfo.keys.length; i++) {
             uint256 index = i * 6 + 3;
-            parts[index] = promptInfo.keys[i];
+            //parts[index] = abi.encodePacked(promptInfo.keys[i]);
             parts[index + 1] = ": ";
-            parts[index + 2] = promptInfo.replies[promptInfo.keys[i]].reply;
+            parts[index + 2] = promptInfo.replies[promptInfo.keys[i]].replyDetail;
             if (i == promptInfo.keys.length - 1) {
                 parts[index + 3] = "</text></svg>";
             } else {
@@ -126,17 +126,17 @@ contract LyonPrompt is ILyonPrompt {
         view
         returns (address owner)
     {
-        return _prompt[promptId.templateId][promptId.id].owner;
+        return _prompt[promptId.templateId][promptId.id].promptOwner;
     }
 
     function _mint(Prompt calldata promptId, address to) internal {
         require(to != address(0), "Cannot mint to the zero address");
         require(
-            _prompt[promptId.templateId][promptId.id].owner == address(0),
+            _prompt[promptId.templateId][promptId.id].promptOwner == address(0),
             "Token already minted"
         );
 
-        _prompt[promptId.templateId][promptId.id].owner = to;
+        _prompt[promptId.templateId][promptId.id].promptOwner = to;
         _requested[to].push(promptId);
         emit SBTMinted(promptId.templateId, promptId.id, to);
     }
@@ -147,24 +147,18 @@ contract LyonPrompt is ILyonPrompt {
      * hqt suggestion: 
      *     answerUpdate(Prompt calldata promptId, ReplyInfo calldata replyinfo_input, )
      */
-    function answerUpdate(Prompt calldata promptId, mapping(string => string) calldata answers) external 
+    function answerUpdate(Prompt calldata promptId, string calldata question, string calldata context, 
+    address replierAddr, string calldata replierName, string calldata replyDetail, string calldata comment,
+    bytes32 signature) external 
     {
         require(msg.sender == ADMIN, "Only admin can update for now");
         PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
-        string question = answers["question"];
-        string context = answers["context"];
-        address replierAddr = answers["replierAddr"];
-
-        string replierName = answers["replierName"];
-        string replyDetail = answers["replyDetail"];
-        string comment = answers["comment"];
-        bytes32 signature = answers["signature"];
         ReplyInfo memory replyInfo = ReplyInfo(replierName, replyDetail, comment, signature, block.timestamp);
 
-        promptInfo.replier[replierAddr] = replyInfo;
+        promptInfo.replies[replierAddr] = replyInfo;
         promptInfo.keys.push(replierAddr);
 
-        emit AnswerUpdated(promptId.templateId, promptId.id, promptInfo.promptOwner, promptInfo.question, reply);
+        emit AnswerUpdated(promptId.templateId, promptId.id, promptInfo.promptOwner, promptInfo.question, replierName, replyDetail);
     }
 
     function queryAllRequested(address owner)

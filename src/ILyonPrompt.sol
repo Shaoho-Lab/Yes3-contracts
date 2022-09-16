@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Creator: Lyon House
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.17;
 
 /**
  * @dev Interface of Prompt.
@@ -88,7 +88,7 @@ interface ILyonPrompt {
         // The context of the prompt.
         string context;
         // Keys of replies
-        string[] keys;
+        address[] keys;
         // The address of the approved operator.
         mapping(address => ReplyInfo) replies;
         // The creation time of this Prompt.
