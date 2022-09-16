@@ -179,6 +179,19 @@ contract LyonPrompt is ILyonPrompt {
         return _replied[owner];
     }
 
+    function queryAllRepliesByPrompt(Prompt calldata promptId)
+        external
+        view
+        returns (ReplyInfo[] memory)
+    {
+        PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
+        ReplyInfo[] memory replies = new ReplyInfo[](promptInfo.keys.length);
+        for (uint256 i = 0; i < promptInfo.keys.length; i++) {
+            replies[i] = promptInfo.replies[promptInfo.keys[i]];
+        }
+        return replies;
+    }
+
     /**
      * @dev Converts a `uint256` to its ASCII `string` decimal representation.
      */
