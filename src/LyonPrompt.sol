@@ -142,16 +142,13 @@ contract LyonPrompt is ILyonPrompt {
 
         _requested[to].push(Prompt(templateId, id, true));
         _currentIndex[templateId]++;
-        emit SBTMinted(templateId, id, to);
+        emit PromptMinted(templateId, id, to);
     }
 
     /**
      * @dev The function that frontend operator calls when someone replies to a certain Prompt
-     * TODO: specify the format of `answers`: 
-     * hqt suggestion: 
-     *     answerUpdate(Prompt calldata promptId, ReplyInfo calldata replyinfo_input, )
      */
-    function answerUpdate(Prompt calldata promptId, address replierAddr, string calldata replierName, string calldata replyDetail, string calldata comment,
+    function replyPrompt(Prompt calldata promptId, address replierAddr, string calldata replierName, string calldata replyDetail, string calldata comment,
     bytes32 signature) external 
     {
         require(msg.sender == ADMIN, "Only admin can update for now");
@@ -163,7 +160,7 @@ contract LyonPrompt is ILyonPrompt {
         _prompt[promptId.templateId][promptId.id].keys.push(replierAddr);
 
         // emit AnswerUpdated(promptId.templateId, promptId.id, promptInfo.promptOwner, promptInfo.question, replierName, replyDetail);
-        emit AnswerUpdated(promptId.templateId, promptId.id, _prompt[promptId.templateId][promptId.id].promptOwner, _prompt[promptId.templateId][promptId.id].question, replierName, replyDetail);
+        emit RepliedToPrompt(promptId.templateId, promptId.id, _prompt[promptId.templateId][promptId.id].promptOwner, _prompt[promptId.templateId][promptId.id].question, replierName, replyDetail);
     }
 
     function queryAllRequested(address owner)

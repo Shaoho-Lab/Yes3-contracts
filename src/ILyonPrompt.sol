@@ -61,11 +61,9 @@ interface ILyonPrompt {
     //                            EVENTS
     // =============================================================
 
-    // TODO: 还需要几个 event 来显示 respond 了，以及 our protocol-specific functions.
-    // e.g. RepliedToPrompt, 
-    event AnswerUpdated(uint256 indexed templateId, uint256 indexed id, address indexed promptOwner, string question, string replierName, string replyDetail);
+    event RepliedToPrompt(uint256 indexed templateId, uint256 indexed id, address indexed promptOwner, string question, string replierName, string replyDetail);
     
-    event SBTMinted(uint256 indexed templateId, uint256 indexed id, address indexed to);
+    event PromptMinted(uint256 indexed templateId, uint256 indexed id, address indexed to);
 
     // =============================================================
     //                            STRUCTS
