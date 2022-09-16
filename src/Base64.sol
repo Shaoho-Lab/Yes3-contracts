@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+// Creator: Lyon House
+pragma solidity ^0.8.16;
+
 library Base64 {
     bytes internal constant TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
