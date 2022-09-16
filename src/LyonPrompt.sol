@@ -129,7 +129,7 @@ contract LyonPrompt is ILyonPrompt {
         return _prompt[promptId.templateId][promptId.id].promptOwner;
     }
 
-    function _mint(Prompt calldata promptId, address to) internal {
+    function _mint(Prompt calldata promptId, string calldata question, string calldata context, address to) internal {
         require(to != address(0), "Cannot mint to the zero address");
         require(
             _prompt[promptId.templateId][promptId.id].promptOwner == address(0),
@@ -137,6 +137,9 @@ contract LyonPrompt is ILyonPrompt {
         );
 
         _prompt[promptId.templateId][promptId.id].promptOwner = to;
+        _prompt[promptId.templateId][promptId.id].question = question;
+        _prompt[promptId.templateId][promptId.id].context = context;
+
         _requested[to].push(promptId);
         emit SBTMinted(promptId.templateId, promptId.id, to);
     }
@@ -147,18 +150,19 @@ contract LyonPrompt is ILyonPrompt {
      * hqt suggestion: 
      *     answerUpdate(Prompt calldata promptId, ReplyInfo calldata replyinfo_input, )
      */
-    function answerUpdate(Prompt calldata promptId, string calldata question, string calldata context, 
-    address replierAddr, string calldata replierName, string calldata replyDetail, string calldata comment,
+    function answerUpdate(Prompt calldata promptId, address replierAddr, string calldata replierName, string calldata replyDetail, string calldata comment,
     bytes32 signature) external 
     {
         require(msg.sender == ADMIN, "Only admin can update for now");
-        PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
         ReplyInfo memory replyInfo = ReplyInfo(replierName, replyDetail, comment, signature, block.timestamp);
+        // PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
+        // promptInfo.replies[replierAddr] = replyInfo;
+        // promptInfo.keys.push(replierAddr);
+        _prompt[promptId.templateId][promptId.id].replies[replierAddr] = replyInfo;
+        _prompt[promptId.templateId][promptId.id].keys.push(replierAddr);
 
-        promptInfo.replies[replierAddr] = replyInfo;
-        promptInfo.keys.push(replierAddr);
-
-        emit AnswerUpdated(promptId.templateId, promptId.id, promptInfo.promptOwner, promptInfo.question, replierName, replyDetail);
+        // emit AnswerUpdated(promptId.templateId, promptId.id, promptInfo.promptOwner, promptInfo.question, replierName, replyDetail);
+        emit AnswerUpdated(promptId.templateId, promptId.id, _prompt[promptId.templateId][promptId.id].promptOwner, _prompt[promptId.templateId][promptId.id].question, replierName, replyDetail);
     }
 
     function queryAllRequested(address owner)
