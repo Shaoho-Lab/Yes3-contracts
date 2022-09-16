@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Creator: Lyon House
 
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.16;
 
 /**
  * @dev Interface of Prompt.
