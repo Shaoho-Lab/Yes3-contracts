@@ -56,12 +56,6 @@ interface ILyonPrompt {
     //                            STRUCTS
     // =============================================================
 
-    enum ReplyType {
-        YES,
-        NO,
-        DONTKNOW
-    }
-
     struct PromptId {
         // The ID of the template. 第几个问题template
         uint256 templateId;
@@ -93,8 +87,6 @@ interface ILyonPrompt {
         string comment;
         // The creation time of this reply.
         uint256 createTime;
-        // response type
-        ReplyType replyType;
         // The address of replier
         address replier;
         // The hash of the commitment/signature
