@@ -18,8 +18,8 @@ contract LyonPrompt is ILyonPrompt {
     mapping(uint256 => mapping(uint256 => PromptInfo)) private _prompt;
     mapping(uint256 => uint256) private _currentIndex;
 
-    mapping(address => PromptId[]) private _requested;
-    mapping(address => PromptId[]) private _replied;
+    mapping(address => Prompt[]) private _requested;
+    mapping(address => Prompt[]) private _replied;
 
     constructor() {
         _name = "Lyon Prompt";
@@ -34,14 +34,12 @@ contract LyonPrompt is ILyonPrompt {
         return _symbol;
     }
 
-    function tokenURI(PromptId calldata tokenId)
+    function tokenURI(Prompt calldata promptId)
         external
         view
         returns (string memory)
     {
-        PromptInfo storage promptInfo = _prompt[tokenId.templateId][
-            tokenId.indexId
-        ];
+        PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
         require(promptInfo.owner != address(0), "URIQueryForNonexistentToken");
 
         string[] memory parts;
@@ -72,9 +70,9 @@ contract LyonPrompt is ILyonPrompt {
                 string(
                     abi.encodePacked(
                         '{"Template": ',
-                        toString(tokenId.templateId),
+                        toString(promptId.templateId),
                         ',"Index": ',
-                        toString(tokenId.templateId),
+                        toString(promptId.templateId),
                         '", "Question": "TBD", "image": "data:image/svg+xml;base64,',
                         Base64.encode(bytes(output)),
                         '"}'
@@ -123,79 +121,56 @@ contract LyonPrompt is ILyonPrompt {
         return _requested[owner].length;
     }
 
-    function ownerOf(PromptId calldata tokenId)
+    function ownerOf(Prompt calldata promptId)
         external
         view
         returns (address owner)
     {
-        return _prompt[tokenId.templateId][tokenId.indexId].owner;
+        return _prompt[promptId.templateId][promptId.id].owner;
+    }
+
+    function _mint(Prompt calldata promptId, address to) internal {
+        require(to != address(0), "Cannot mint to the zero address");
+        require(
+            _prompt[promptId.templateId][promptId.id].owner == address(0),
+            "Token already minted"
+        );
+
+        _prompt[promptId.templateId][promptId.id].owner = to;
+        _requested[to].push(promptId);
+        emit SBTMinted(promptId.templateId, promptId.id, to);
     }
 
     /**
      * @dev The function that frontend operator calls when someone replies to a certain Prompt
      * TODO: specify the format of `answers`: 
      * hqt suggestion: 
-     *     answerUpdate(PromptId calldata tokenId, ReplyInfo calldata replyinfo_input, )
+     *     answerUpdate(Prompt calldata promptId, ReplyInfo calldata replyinfo_input, )
      */
-    function answerUpdate(PromptId calldata tokenId, string[] calldata answers) 
-        public
+    function answerUpdate(Prompt calldata promptId, mapping(string => string) calldata answers) external 
     {
         require(msg.sender == ADMIN, "Only admin can update for now");
-        PromptInfo storage promptInfo = _prompt[tokenId.templateId][
-            tokenId.indexId
-            // TODO: tokenID is a bad name: Reply, template 都是token，可以把名字改成 targetPromptId 之类的
-        ];
-        string memory replier = answers[0]; // QUESTION: why is replier a strong not an address? 
-        ReplyInfo memory reply;
+        PromptInfo storage promptInfo = _prompt[promptId.templateId][promptId.id];
+        string question = answers["question"];
+        string context = answers["context"];
+        address replierAddr = answers["replierAddr"];
 
-        if (
-            (keccak256(abi.encodePacked(answers[1])) ==
-                keccak256(abi.encodePacked("Yes")))
-        ) {
-            reply = ReplyInfo(
-                replier,
-                answers[2],
-                block.timestamp,
-                ReplyType.YES, // FIXME
-                address(0), // FIXME
-                1 // FIXME
-            );
-        }
-        if (
-            (keccak256(abi.encodePacked(answers[1])) ==
-                keccak256(abi.encodePacked("No")))
-        ) {
-            reply = ReplyInfo(
-                replier,
-                answers[2],
-                block.timestamp,
-                ReplyType.NO,
-                address(0),
-                1
-            );
-        }
-        if (
-            (keccak256(abi.encodePacked(answers[1])) ==
-                keccak256(abi.encodePacked("DontKnow")))
-        ) {
-            reply = ReplyInfo(
-                replier,
-                answers[2],
-                block.timestamp,
-                ReplyType.DONTKNOW,
-                address(0),
-                1
-            );
-        }
+        string replierName = answers["replierName"];
+        string replyDetail = answers["replyDetail"];
+        string comment = answers["comment"];
+        bytes32 signature = answers["signature"];
+        ReplyInfo memory replyInfo = ReplyInfo(replierName, replyDetail, comment, signature, block.timestamp);
 
-        promptInfo.replies[replier] = reply;
-        // TODO: should emit an event here with all relevant information 
+        promptInfo.replier[replierAddr] = replyInfo;
+        promptInfo.keys.push(replierAddr);
+
+        emit AnswerUpdated(promptId.templateId, promptId.id, promptInfo.promptOwner, promptInfo.question, reply);
     }
 
     function queryAllRequested(address owner)
         external
         view
-        returns (PromptId[] memory)
+        returns (Prompt[] memory)
     {
         return _requested[owner];
     }
@@ -203,7 +178,7 @@ contract LyonPrompt is ILyonPrompt {
     function queryAllEndorsed(address owner)
         external
         view
-        returns (PromptId[] memory)
+        returns (Prompt[] memory)
     {
         return _replied[owner];
     }

@@ -63,53 +63,50 @@ interface ILyonPrompt {
 
     // TODO: 还需要几个 event 来显示 respond 了，以及 our protocol-specific functions.
     // e.g. RepliedToPrompt, 
-
-
+    event AnswerUpdated(uint256 indexed templateId, uint256 indexed id, address indexed promptOwner, string question, string replierName, string replyDetail);
+    
+    event SBTMinted(uint256 indexed templateId, uint256 indexed id, address indexed to);
 
     // =============================================================
     //                            STRUCTS
     // =============================================================
 
-    struct PromptId {
+    struct Prompt {
         // The ID of the template. 第几个问题template
         uint256 templateId;
-        // The ID of the token. 第几个用这个template问问题的
-        uint256 indexId;
+        // The ID of current prompt. 第几个用这个template问问题的
+        uint256 id;
         // Whether the token has been burned.
         bool exists;
     }
 
     struct PromptInfo {
         // The address of the owner.
-        address owner;
+        address promptOwner;
         // The SBT_question
         string question;
-        // The address of the approved operator.
-        mapping(string => ReplyInfo) replies;
-        // The creation time of this Prompt.
-        uint64 createTime;
+        // The context of the prompt.
+        string context;
         // Keys of replies
         string[] keys;
+        // The address of the approved operator.
+        mapping(address => ReplyInfo) replies;
+        // The creation time of this Prompt.
+        uint64 createTime;
+        
     }
 
     struct ReplyInfo {
+        // The alias of replier
+        string replierName;
         // The reply detail.
-        string reply;
+        string replyDetail;
         // Addtional comment
         string comment;
-        // The creation time of this reply.
-        uint256 createTime;
-        // The address of replier
-        address replier;
         // The hash of the commitment/signature
-        // TODO: 需要把 signature 放到这边。Question: 是否要把 endorser wallet address, endoresement text 等等也放进去
-        // TODO: what is the signature format? I don't think it's a number 
-        // can refer to: farcaster.xyz/schemas/v1/cast-short-text , https://www.farcaster.xyz/docs/fetch-casts
-        // or this might be a simple way: https://docs.ethers.io/v5/getting-started/#getting-started--signing
-
-        // on-chain signature verification example: https://solidity-by-example.org/signature/
-        // (from hqt, 这部分我可以来做)
         bytes32 signature;
+         // The creation time of this reply.
+        uint256 createTime;
     }
 
     // =============================================================
@@ -182,7 +179,7 @@ interface ILyonPrompt {
      *
      * - `tokenId` must exist.
      */
-    function ownerOf(PromptId calldata tokenId)
+    function ownerOf(Prompt calldata tokenId)
         external
         view
         returns (address owner);
@@ -304,7 +301,7 @@ interface ILyonPrompt {
     /**
      * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
-    function tokenURI(PromptId calldata tokenId)
+    function tokenURI(Prompt calldata tokenId)
         external
         view
         returns (string memory);
