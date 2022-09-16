@@ -141,7 +141,7 @@ contract LyonPrompt is ILyonPrompt {
         _prompt[templateId][id].question = question;
         _prompt[templateId][id].context = context;
 
-        _promptByOwner[to].push(Prompt(templateId, id, true));
+        _promptByOwner[to].push(Prompt(templateId, id));
 
         emit PromptMinted(templateId, id, to);
     }
