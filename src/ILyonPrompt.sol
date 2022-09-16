@@ -7,6 +7,11 @@ pragma solidity ^0.8.4;
  * @dev Interface of Prompt.
  */
 interface ILyonPrompt {
+
+    // =============================================================
+    //                            ERRORS
+    // =============================================================
+
     /**
      * The caller must own the token or be an approved operator.
      */
@@ -53,6 +58,15 @@ interface ILyonPrompt {
     error OwnershipNotInitializedForExtraData();
 
     // =============================================================
+    //                            EVENTS
+    // =============================================================
+
+    // TODO: 还需要几个 event 来显示 respond 了，以及 our protocol-specific functions.
+    // e.g. RepliedToPrompt, 
+
+
+
+    // =============================================================
     //                            STRUCTS
     // =============================================================
 
@@ -79,8 +93,6 @@ interface ILyonPrompt {
     }
 
     struct ReplyInfo {
-        // TODO: 需要把 signature 放到这边。Question: 是否要把 endorser wallet address, endoresement text 等等也放进去
-
         // The reply detail.
         string reply;
         // Addtional comment
@@ -90,7 +102,14 @@ interface ILyonPrompt {
         // The address of replier
         address replier;
         // The hash of the commitment/signature
-        uint256 signature;
+        // TODO: 需要把 signature 放到这边。Question: 是否要把 endorser wallet address, endoresement text 等等也放进去
+        // TODO: what is the signature format? I don't think it's a number 
+        // can refer to: farcaster.xyz/schemas/v1/cast-short-text , https://www.farcaster.xyz/docs/fetch-casts
+        // or this might be a simple way: https://docs.ethers.io/v5/getting-started/#getting-started--signing
+
+        // on-chain signature verification example: https://solidity-by-example.org/signature/
+        // (from hqt, 这部分我可以来做)
+        bytes32 signature;
     }
 
     // =============================================================
@@ -150,7 +169,6 @@ interface ILyonPrompt {
         bool approved
     );
 
-    // TODO: 还需要几个 event 来显示 respond 了，以及 our protocol-specific functions.
 
     /**
      * @dev Returns the number of tokens in `owner`'s account.

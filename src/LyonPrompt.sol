@@ -131,14 +131,21 @@ contract LyonPrompt is ILyonPrompt {
         return _prompt[tokenId.templateId][tokenId.indexId].owner;
     }
 
-    function answerUpdate(PromptId calldata tokenId, string[] calldata answers)
+    /**
+     * @dev The function that frontend operator calls when someone replies to a certain Prompt
+     * TODO: specify the format of `answers`: 
+     * hqt suggestion: 
+     *     answerUpdate(PromptId calldata tokenId, ReplyInfo calldata replyinfo_input, )
+     */
+    function answerUpdate(PromptId calldata tokenId, string[] calldata answers) 
         public
     {
-        require(msg.sender == ADMIN, "Only admin can update");
+        require(msg.sender == ADMIN, "Only admin can update for now");
         PromptInfo storage promptInfo = _prompt[tokenId.templateId][
             tokenId.indexId
+            // TODO: tokenID is a bad name: Reply, template 都是token，可以把名字改成 targetPromptId 之类的
         ];
-        string memory replier = answers[0];
+        string memory replier = answers[0]; // QUESTION: why is replier a strong not an address? 
         ReplyInfo memory reply;
 
         if (
@@ -149,9 +156,9 @@ contract LyonPrompt is ILyonPrompt {
                 replier,
                 answers[2],
                 block.timestamp,
-                ReplyType.YES,
-                address(0),
-                1
+                ReplyType.YES, // FIXME
+                address(0), // FIXME
+                1 // FIXME
             );
         }
         if (
@@ -182,6 +189,7 @@ contract LyonPrompt is ILyonPrompt {
         }
 
         promptInfo.replies[replier] = reply;
+        // TODO: should emit an event here with all relevant information 
     }
 
     function queryAllRequested(address owner)
