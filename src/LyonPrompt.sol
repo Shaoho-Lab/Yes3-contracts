@@ -284,6 +284,25 @@ contract LyonPrompt is ILyonPrompt {
     }
 
     /**
+     * @dev Returns the details in `promptId` prompt.
+     */
+    function queryPromptInfoById(Prompt calldata promptId)
+        external
+        view
+        returns (address promptOwner, string memory question, string memory context, uint64 createTime)
+    {
+        PromptInfo storage promptInfo = _prompt[promptId.templateId][
+            promptId.id
+        ];
+        return (
+            promptInfo.promptOwner,
+            promptInfo.question,
+            promptInfo.context,
+            promptInfo.createTime
+        );
+    }
+
+    /**
      * @dev Burns `promptId` prompt's reply given replier.
      */
     function burnReplies(Prompt calldata promptId, address replier) external {
