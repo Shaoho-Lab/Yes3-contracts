@@ -34,7 +34,7 @@ contract LyonPrompt is ILyonPrompt {
 
     constructor() {
         _name = "Lyon Prompt";
-        _symbol = "LYN";
+        _symbol = "LYNP";
     }
 
     /**
