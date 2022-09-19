@@ -59,7 +59,7 @@ interface ILyonPrompt {
         mapping(address => ReplyInfo) replies;
         // The creation time of this Prompt.
         uint64 createTime;
-        
+        string SBTURI;
     }
 
     struct ReplyInfo {

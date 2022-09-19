@@ -69,59 +69,7 @@ contract LyonPrompt is ILyonPrompt {
         view
         returns (string memory)
     {
-        PromptInfo storage promptInfo = _prompt[promptId.templateId][
-            promptId.id
-        ];
-        require(
-            promptInfo.promptOwner != address(0),
-            "URIQueryForNonexistentToken"
-        );
-
-        string[] memory parts;
-        parts[
-            0
-        ] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
-        parts[1] = promptInfo.question;
-        parts[2] = '</text><text x="10" y="40" class="base">';
-        for (uint256 i = 0; i < promptInfo.keys.length; i++) {
-            uint256 index = i * 6 + 3;
-            //parts[index] = abi.encodePacked(promptInfo.keys[i]);
-            parts[index + 1] = ": ";
-            parts[index + 2] = promptInfo
-                .replies[promptInfo.keys[i]]
-                .replyDetail;
-            if (i == promptInfo.keys.length - 1) {
-                parts[index + 3] = "</text></svg>";
-            } else {
-                parts[index + 3] = '</text><text x="10" y="';
-                parts[index + 4] = toString(60 + i * 20);
-                parts[index + 5] = '" class="base">';
-            }
-        }
-        string memory output;
-        for (uint256 i = 0; i < parts.length; i++) {
-            output = string(abi.encodePacked(output, parts[i]));
-        }
-        string memory json = Base64.encode(
-            bytes(
-                string(
-                    abi.encodePacked(
-                        '{"Template": ',
-                        toString(promptId.templateId),
-                        ',"Index": ',
-                        toString(promptId.templateId),
-                        '", "Question": "TBD", "image": "data:image/svg+xml;base64,',
-                        Base64.encode(bytes(output)),
-                        '"}'
-                    )
-                )
-            )
-        );
-
-        output = string(
-            abi.encodePacked("data:application/json;base64,", json)
-        );
-
+        string memory output = _prompt[promptId.templateId][promptId.id].SBTURI;
         return output;
     }
 
@@ -191,7 +139,8 @@ contract LyonPrompt is ILyonPrompt {
         uint256 templateId,
         string calldata question,
         string calldata context,
-        address to
+        address to,
+        string calldata SBTURI
     ) external {
         require(to != address(0), "Cannot mint to the zero address");
         require(
@@ -203,6 +152,7 @@ contract LyonPrompt is ILyonPrompt {
         _prompt[templateId][id].promptOwner = to;
         _prompt[templateId][id].question = question;
         _prompt[templateId][id].context = context;
+        _prompt[templateId][id].SBTURI = SBTURI;
 
         _promptByOwner[to].push(Prompt(templateId, id));
 
@@ -289,7 +239,7 @@ contract LyonPrompt is ILyonPrompt {
     function queryPromptInfoById(Prompt calldata promptId)
         external
         view
-        returns (address promptOwner, string memory question, string memory context, uint64 createTime)
+        returns (address promptOwner, string memory question, string memory context, string memory SBTURI, uint64 createTime)
     {
         PromptInfo storage promptInfo = _prompt[promptId.templateId][
             promptId.id
@@ -298,6 +248,7 @@ contract LyonPrompt is ILyonPrompt {
             promptInfo.promptOwner,
             promptInfo.question,
             promptInfo.context,
+            promptInfo.SBTURI,
             promptInfo.createTime
         );
     }
