@@ -144,7 +144,7 @@ contract LyonPrompt is ILyonPrompt {
     ) external {
         require(to != address(0), "Cannot mint to the zero address");
         require(
-            _prompt[templateId][_currentIndex[templateId]++].promptOwner ==
+            _prompt[templateId][++_currentIndex[templateId]].promptOwner ==
                 address(0),
             "This prompt already minted"
         );
