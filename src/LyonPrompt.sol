@@ -199,8 +199,11 @@ contract LyonPrompt is ILyonPrompt {
             promptId.id,
             promptInfo.promptOwner,
             promptInfo.question,
+            replierAddr,
             replierName,
-            replyDetail
+            replyDetail,
+            comment,
+            signature
         );
     }
 

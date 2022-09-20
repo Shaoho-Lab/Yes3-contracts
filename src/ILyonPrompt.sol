@@ -40,8 +40,11 @@ interface ILyonPrompt {
         uint256 indexed id,
         address indexed promptOwner,
         string question,
+        address replierAddr,
         string replierName,
-        string replyDetail
+        string replyDetail,
+        string comment,
+        bytes32 signature
     );
 
     event PromptMinted(
