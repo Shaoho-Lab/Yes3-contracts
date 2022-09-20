@@ -133,16 +133,11 @@ contract LyonPrompt is ILyonPrompt {
         string calldata SBTURI
     ) external {
         require(to != address(0), "Cannot mint to the zero address");
-        uint256 count = _currentIndex[templateId];
+        uint256 count = _currentIndex[templateId] + 1;
         _mint(templateId, question, context, to, SBTURI);
         unchecked {
-            if (to.code.length != 0) {
-                if (_currentIndex[templateId] != count) {
-                    revert SafeMintCheckFailed({
-                        templateId: templateId,
-                        id: count
-                    });
-                }
+            if (_currentIndex[templateId] != count) {
+                revert SafeMintCheckFailed({templateId: templateId, id: count});
             }
         }
     }
