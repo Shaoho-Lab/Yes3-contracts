@@ -6,13 +6,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract template is ERC721("Lyon Template","LYNT"){
     error Unauthorized();
 
-    uint templateId = 0;
+    uint templateId = 1;
     mapping(uint => templateMetaData[]) public ownershipRecord;
     mapping(uint256 => uint256) public promptCount;
 
     struct templateMetaData{
-        uint templateId;
-        uint timeStamp;
+        uint256 templateId;
+        uint256 timeStamp;
         string templateURI; //Question recorded at Mint
     }
 

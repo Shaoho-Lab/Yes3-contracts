@@ -125,6 +125,28 @@ contract LyonPrompt is ILyonPrompt {
         return promptOwner;
     }
 
+    function safeMint(
+        uint256 templateId,
+        string calldata question,
+        string calldata context,
+        address to,
+        string calldata SBTURI
+    ) external {
+        require(to != address(0), "Cannot mint to the zero address");
+        uint256 count = _currentIndex[templateId];
+        _mint(templateId, question, context, to, SBTURI);
+        unchecked {
+            if (to.code.length != 0) {
+                if (_currentIndex[templateId] != count) {
+                    revert SafeMintCheckFailed({
+                        templateId: templateId,
+                        id: count
+                    });
+                }
+            }
+        }
+    }
+
     /**
      * @dev Mints prompt and transfers them to `to`.
      *
@@ -141,14 +163,8 @@ contract LyonPrompt is ILyonPrompt {
         string calldata context,
         address to,
         string calldata SBTURI
-    ) external {
-        require(to != address(0), "Cannot mint to the zero address");
-        require(
-            _prompt[templateId][++_currentIndex[templateId]].promptOwner ==
-                address(0),
-            "This prompt already minted"
-        );
-        uint256 id = _currentIndex[templateId];
+    ) internal {
+        uint256 id = ++_currentIndex[templateId];
         _prompt[templateId][id].promptOwner = to;
         _prompt[templateId][id].question = question;
         _prompt[templateId][id].context = context;
@@ -239,7 +255,13 @@ contract LyonPrompt is ILyonPrompt {
     function queryPromptInfoById(Prompt calldata promptId)
         external
         view
-        returns (address promptOwner, string memory question, string memory context, string memory SBTURI, uint64 createTime)
+        returns (
+            address promptOwner,
+            string memory question,
+            string memory context,
+            string memory SBTURI,
+            uint64 createTime
+        )
     {
         PromptInfo storage promptInfo = _prompt[promptId.templateId][
             promptId.id

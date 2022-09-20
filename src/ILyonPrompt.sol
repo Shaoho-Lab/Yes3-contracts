@@ -7,7 +7,6 @@ pragma solidity ^0.8.16;
  * @dev Interface of Prompt.
  */
 interface ILyonPrompt {
-
     // =============================================================
     //                            ERRORS
     // =============================================================
@@ -27,13 +26,29 @@ interface ILyonPrompt {
      */
     error URIQueryForNonexistentToken();
 
+    /**
+     * SafeMint failed due to network error.
+     */
+    error SafeMintCheckFailed(uint256 templateId, uint256 id);
+
     // =============================================================
     //                            EVENTS
     // =============================================================
 
-    event RepliedToPrompt(uint256 indexed templateId, uint256 indexed id, address indexed promptOwner, string question, string replierName, string replyDetail);
-    
-    event PromptMinted(uint256 indexed templateId, uint256 indexed id, address indexed to);
+    event RepliedToPrompt(
+        uint256 indexed templateId,
+        uint256 indexed id,
+        address indexed promptOwner,
+        string question,
+        string replierName,
+        string replyDetail
+    );
+
+    event PromptMinted(
+        uint256 indexed templateId,
+        uint256 indexed id,
+        address indexed to
+    );
 
     // =============================================================
     //                            STRUCTS
@@ -59,6 +74,7 @@ interface ILyonPrompt {
         mapping(address => ReplyInfo) replies;
         // The creation time of this Prompt.
         uint64 createTime;
+        // Prompt URI
         string SBTURI;
     }
 
@@ -71,7 +87,7 @@ interface ILyonPrompt {
         string comment;
         // The hash of the commitment/signature
         bytes32 signature;
-         // The creation time of this reply.
+        // The creation time of this reply.
         uint256 createTime;
     }
 
