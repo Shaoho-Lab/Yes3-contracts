@@ -3,7 +3,7 @@ pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract template is ERC721("Lyon Template","LYNT"){
+contract LyonTemplate is ERC721("Lyon Template","LYNT"){
     error Unauthorized();
 
     uint templateId = 1;

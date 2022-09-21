@@ -181,6 +181,7 @@ contract LyonPrompt is ILyonPrompt {
         string calldata comment,
         bytes32 signature
     ) external {
+        require(msg.sender == ADMIN, "Only admin can update prompt");
         ReplyInfo memory replyInfo = ReplyInfo(
             replierName,
             replyDetail,
