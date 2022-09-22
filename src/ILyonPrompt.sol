@@ -44,7 +44,8 @@ interface ILyonPrompt {
         string replierName,
         string replyDetail,
         string comment,
-        bytes32 signature
+        bytes32 signature,
+        uint256 creationTime
     );
 
     event PromptMinted(
@@ -76,7 +77,7 @@ interface ILyonPrompt {
         // The address of the approved operator.
         mapping(address => ReplyInfo) replies;
         // The creation time of this Prompt.
-        uint64 createTime;
+        uint256 createTime;
         // Prompt URI
         string SBTURI;
     }

@@ -36,7 +36,7 @@ contract LyonTemplate is ERC721("Lyon Template","LYNT"){
     function queryAllTemplates() external view returns (templateMetaData[] memory){
         templateMetaData[] memory allTemplates = new templateMetaData[](templateId);
         for(uint i = 1; i < templateId + 1; i++){
-            allTemplates[i] = ownershipRecord[i];
+            allTemplates[i - 1] = ownershipRecord[i];
         }
         return allTemplates;
     }

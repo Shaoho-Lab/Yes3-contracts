@@ -55,9 +55,7 @@ contract LyonPrompt is ILyonPrompt {
      * @dev Returns the number of prompt in `owner`'s account.
      */
     function balanceOf(address owner) external view returns (uint256 balance) {
-        if (owner == address(0)) {
-            revert BalanceQueryForZeroAddress();
-        }
+        require(owner != address(0), "BalanceQueryForZeroAddress");
         return _promptByOwner[owner].length;
     }
 
@@ -163,6 +161,7 @@ contract LyonPrompt is ILyonPrompt {
         _prompt[templateId][id].promptOwner = to;
         _prompt[templateId][id].question = question;
         _prompt[templateId][id].context = context;
+        _prompt[templateId][id].createTime = block.timestamp;
         _prompt[templateId][id].SBTURI = SBTURI;
 
         _promptByOwner[to].push(Prompt(templateId, id));
@@ -204,7 +203,8 @@ contract LyonPrompt is ILyonPrompt {
             replierName,
             replyDetail,
             comment,
-            signature
+            signature,
+            block.timestamp
         );
     }
 
@@ -259,7 +259,7 @@ contract LyonPrompt is ILyonPrompt {
             string memory question,
             string memory context,
             string memory SBTURI,
-            uint64 createTime
+            uint256 createTime
         )
     {
         PromptInfo storage promptInfo = _prompt[promptId.templateId][
@@ -340,6 +340,11 @@ contract LyonPrompt is ILyonPrompt {
                 break;
             }
         }
+    }
+
+    function setTokenURI(Prompt memory tokenId, string memory _tokenURI) public {
+        require(msg.sender == _prompt[tokenId.templateId][tokenId.id].promptOwner, "Only prompt owner can set tokenURI");
+        _prompt[tokenId.templateId][tokenId.id].SBTURI = _tokenURI;
     }
 
     /**
