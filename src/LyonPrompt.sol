@@ -178,7 +178,7 @@ contract LyonPrompt is ILyonPrompt {
      */
     function replyPrompt(
         Prompt calldata promptId,
-        address replierAddr,
+        address replierAddress,
         string calldata replierName,
         string calldata replyDetail,
         string calldata comment,
@@ -195,15 +195,15 @@ contract LyonPrompt is ILyonPrompt {
         PromptInfo storage promptInfo = _prompt[promptId.templateId][
             promptId.id
         ];
-        promptInfo.replies[replierAddr] = replyInfo;
-        promptInfo.keys.push(replierAddr);
+        promptInfo.replies[replierAddress] = replyInfo;
+        promptInfo.keys.push(replierAddress);
 
         emit RepliedToPrompt(
             promptId.templateId,
             promptId.id,
             promptInfo.promptOwner,
             promptInfo.question,
-            replierAddr,
+            replierAddress,
             replierName,
             replyDetail,
             comment,
@@ -215,7 +215,7 @@ contract LyonPrompt is ILyonPrompt {
     /**
      * @dev Returns the id of prompts owned by `owner`.
      */
-    function queryAllPromptByAddr(address owner)
+    function queryAllPromptByAddress(address owner)
         external
         view
         returns (Prompt[] memory)
@@ -226,7 +226,7 @@ contract LyonPrompt is ILyonPrompt {
     /**
      * @dev Returns the id of prompts replied by `owner`.
      */
-    function queryAllRepliesByAddr(address owner)
+    function queryAllRepliesByAddressess(address owner)
         external
         view
         returns (Prompt[] memory)
