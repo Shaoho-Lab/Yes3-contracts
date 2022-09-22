@@ -1,4 +1,7 @@
-pragma solidity 0.8.16;
+// SPDX-License-Identifier: MIT
+// Creator: Lyon Protocol
+
+pragma solidity ^0.8.16;
 
 import "forge-std/Test.sol";
 import "../src/LyonTemplate.sol";

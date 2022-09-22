@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
-// Creator: Lyon House
+// Creator: Lyon Protocol
 
 pragma solidity ^0.8.16;
 
 import "./ILyonPrompt.sol";
+import "./ILyonPromptReceiver.sol";
 import "./Base64.sol";
 
 /**
@@ -130,14 +131,11 @@ contract LyonPrompt is ILyonPrompt {
         address to,
         string calldata SBTURI
     ) external {
-        require(to != address(0), "Cannot mint to the zero address");
-        uint256 count = _currentIndex[templateId] + 1;
         _mint(templateId, question, context, to, SBTURI);
-        unchecked {
-            if (_currentIndex[templateId] != count) {
-                revert SafeMintCheckFailed({templateId: templateId, id: count});
-            }
-        }
+        require(
+            _checkOnILyonPromptReceived(address(0), to, templateId, ""),
+            "LyonPrompt: transfer to non LyonPromptReceiver implementer"
+        );
     }
 
     /**
@@ -157,7 +155,13 @@ contract LyonPrompt is ILyonPrompt {
         address to,
         string calldata SBTURI
     ) internal {
-        uint256 id = ++_currentIndex[templateId];
+        require(to != address(0), "LyonPrompt: mint to the zero address");
+        require(
+            _prompt[templateId][++_currentIndex[templateId]].promptOwner ==
+                address(0),
+            "LyonPrompt: prompt already minted"
+        );
+        uint256 id = _currentIndex[templateId];
         _prompt[templateId][id].promptOwner = to;
         _prompt[templateId][id].question = question;
         _prompt[templateId][id].context = context;
@@ -342,8 +346,13 @@ contract LyonPrompt is ILyonPrompt {
         }
     }
 
-    function setTokenURI(Prompt memory tokenId, string memory _tokenURI) public {
-        require(msg.sender == _prompt[tokenId.templateId][tokenId.id].promptOwner, "Only prompt owner can set tokenURI");
+    function setTokenURI(Prompt memory tokenId, string memory _tokenURI)
+        public
+    {
+        require(
+            msg.sender == _prompt[tokenId.templateId][tokenId.id].promptOwner,
+            "Only prompt owner can set tokenURI"
+        );
         _prompt[tokenId.templateId][tokenId.id].SBTURI = _tokenURI;
     }
 
@@ -370,5 +379,57 @@ contract LyonPrompt is ILyonPrompt {
             value /= 10;
         }
         return string(buffer);
+    }
+
+    /**
+     * @dev Internal function to invoke {ILyonPromptReceiver-onLyonPromptReceived} on a target address.
+     * The call is not executed if the target address is not a contract.
+     *
+     * @param from address representing the previous owner of the given token ID
+     * @param to target address that will receive the tokens
+     * @param tokenId uint256 ID of the token to be transferred
+     * @param data bytes optional data to send along with the call
+     * @return bool whether the call correctly returned the expected magic value
+     */
+    function _checkOnILyonPromptReceived(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) private returns (bool) {
+        if (isContract(to)) {
+            try
+                ILyonPromptReceiver(to).onILyonPromptReceived(
+                    msg.sender,
+                    from,
+                    tokenId,
+                    data
+                )
+            returns (bytes4 retval) {
+                return
+                    retval == ILyonPromptReceiver.onILyonPromptReceived.selector;
+            } catch (bytes memory reason) {
+                if (reason.length == 0) {
+                    revert(
+                        "LyonPrompt: transfer to non LyonPromptReceiver implementer"
+                    );
+                } else {
+                    /// @solidity memory-safe-assembly
+                    assembly {
+                        revert(add(32, reason), mload(reason))
+                    }
+                }
+            }
+        } else {
+            return true;
+        }
+    }
+
+    function isContract(address account) internal view returns (bool) {
+        // This method relies on extcodesize/address.code.length, which returns 0
+        // for contracts in construction, since the code is only stored at the end
+        // of the constructor execution.
+
+        return account.code.length > 0;
     }
 }
