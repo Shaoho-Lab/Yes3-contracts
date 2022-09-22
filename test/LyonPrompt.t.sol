@@ -140,22 +140,13 @@ contract LyonPromptTest is Test {
     }
 
     function testqueryAllPromptByAddr() public {
-        // prmt.queryAllPromptByAddr(owner);
         assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[0].templateId, 1);
         assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[0].id, 1);
-        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[1].templateId, 1);
-        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[1].id, 2);
+        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[1].templateId, 2);
+        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[1].id, 1);
     }
 
     // check the template testing is correct
-    function testMintTemplate() public {
-        assertEq(tmpl.balanceOf(templateMinter1), 1);
-        assertEq(tmpl.balanceOf(templateMinter2), 2);
-        assertEq(tmpl.ownerOf(1), (templateMinter1));
-        assertEq(tmpl.ownerOf(2), (templateMinter2));
-        assertEq(tmpl.ownerOf(3), (templateMinter2));
-    }
-
     // check Prompt minting logic
     function testPromptTotalSupply() public {
         assertEq(prmt.totalSupply(1), 2);
