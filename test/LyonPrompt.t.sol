@@ -107,6 +107,7 @@ contract LyonPromptTest is Test {
 
     function testPromptReplyEvent() public {
         // test RepliedToPrompt
+        vm.warp(1);
         vm.expectEmit(true, true, true, true);
         emit RepliedToPrompt(
             1, // templateId
@@ -117,12 +118,14 @@ contract LyonPromptTest is Test {
             "replier1", // replierName
             "replydetail1", // replyDetail
             "comment1", //comment
-            "0xaaa" // signature
+            "0xaaa", // signature
+            1
         );
         vm.prank(promptADMIN);
         prmt.replyPrompt(
             ILyonPrompt.Prompt(1, 1), // promptId
             address(3245), // replierAddr
+            "replier1", // replierName
             "replydetail1", // replyDetail,
             "comment1", //comment
             "0xaaa" // signature
@@ -134,6 +137,7 @@ contract LyonPromptTest is Test {
         prmt.replyPrompt(
             ILyonPrompt.Prompt(1, 1), // promptId
             address(3245), // replierAddr
+            "replier1", // replierName
             "replydetail1", // replyDetail,
             "comment1", //comment
             "0xaaa" // signature
@@ -141,9 +145,15 @@ contract LyonPromptTest is Test {
     }
 
     function testqueryAllPromptByAddr() public {
-        assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[0].templateId, 1);
+        assertEq(
+            prmt.queryAllPromptByAddress(promptMinter1_1)[0].templateId,
+            1
+        );
         assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[0].id, 1);
-        assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[1].templateId, 2);
+        assertEq(
+            prmt.queryAllPromptByAddress(promptMinter1_1)[1].templateId,
+            2
+        );
         assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[1].id, 1);
     }
 
@@ -167,7 +177,8 @@ contract LyonPromptTest is Test {
         string replierName,
         string replyDetail,
         string comment,
-        bytes32 signature
+        bytes32 signature,
+        uint256 creationTime
     );
 
     event PromptMinted(

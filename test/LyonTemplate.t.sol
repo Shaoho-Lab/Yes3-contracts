@@ -35,29 +35,6 @@ contract LyonTemplateTest is Test {
     }
 
     function testqueryAllTemplates() public {
-        // console.logInt(int 3);
-        // console.log(tmpl.returnOwnershipRecord(1).templateId);
-        // console.log(tmpl.returnOwnershipRecord(1).owner);
-        // console.log(tmpl.returnOwnershipRecord(1).question);
-        // console.log(tmpl.returnOwnershipRecord(1).context);
-        // console.log(tmpl.returnOwnershipRecord(1).timeStamp);
-        // console.log(tmpl.returnOwnershipRecord(1).templateURI);
-        // console.log();
-
-        // console.log(tmpl.returnOwnershipRecord(2).templateId);
-        // console.log(tmpl.returnOwnershipRecord(2).owner);
-        // console.log(tmpl.returnOwnershipRecord(2).question);
-        // console.log(tmpl.returnOwnershipRecord(2).context);
-        // console.log(tmpl.returnOwnershipRecord(2).timeStamp);
-        // console.log(tmpl.returnOwnershipRecord(2).templateURI);
-        // console.log();
-
-        // console.log(tmpl.returnOwnershipRecord(3).templateId);
-        // console.log(tmpl.returnOwnershipRecord(3).owner);
-        // console.log(tmpl.returnOwnershipRecord(3).question);
-        // console.log(tmpl.returnOwnershipRecord(3).context);
-        // console.log(tmpl.returnOwnershipRecord(3).timeStamp);
-        // console.log(tmpl.returnOwnershipRecord(3).templateURI);
         assertEq(tmpl.queryAllTemplates()[0].templateId, 1);
         assertEq(tmpl.queryAllTemplates()[0].owner, templateMinter1);
         assertEq(tmpl.queryAllTemplates()[0].question, "q");
@@ -78,27 +55,6 @@ contract LyonTemplateTest is Test {
         assertEq(tmpl.queryAllTemplates()[2].context, "c");
         assertEq(tmpl.queryAllTemplates()[2].timeStamp, 1);
         assertEq(tmpl.queryAllTemplates()[2].templateURI, "template 2 URI");
-        // assertEq(
-        //     tmpl.queryAllTemplates(),
-        //     [
-        //         LyonTemplate.templateMetaData(
-        //             1,
-        //             templateMinter1,
-        //             "q",
-        //             "c",
-        //             1,
-        //             "template 1 URI"
-        //         ),
-        //         LyonTemplate.templateMetaData(
-        //             2,
-        //             templateMinter2,
-        //             "q",
-        //             "c",
-        //             1,
-        //             "template 2 URI"
-        //         )
-        //     ]
-        // );
     }
 
     // =============================================================
