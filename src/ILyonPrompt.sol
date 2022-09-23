@@ -41,7 +41,6 @@ interface ILyonPrompt {
         address indexed promptOwner,
         string question,
         address replierAddr,
-        string replierName,
         string replyDetail,
         string comment,
         bytes32 signature,
@@ -83,8 +82,6 @@ interface ILyonPrompt {
     }
 
     struct ReplyInfo {
-        // The alias of replier
-        string replierName;
         // The reply detail.
         string replyDetail;
         // Addtional comment

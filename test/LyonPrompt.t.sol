@@ -123,7 +123,6 @@ contract LyonPromptTest is Test {
         prmt.replyPrompt(
             ILyonPrompt.Prompt(1, 1), // promptId
             address(3245), // replierAddr
-            "replier1", // replierName
             "replydetail1", // replyDetail,
             "comment1", //comment
             "0xaaa" // signature
@@ -135,7 +134,6 @@ contract LyonPromptTest is Test {
         prmt.replyPrompt(
             ILyonPrompt.Prompt(1, 1), // promptId
             address(3245), // replierAddr
-            "replier1", // replierName
             "replydetail1", // replyDetail,
             "comment1", //comment
             "0xaaa" // signature
