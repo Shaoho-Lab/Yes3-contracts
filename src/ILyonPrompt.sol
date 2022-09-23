@@ -43,7 +43,7 @@ interface ILyonPrompt {
         address replierAddress,
         string replyDetail,
         string comment,
-        bytes32 signature,
+        string signature,
         uint256 creationTime
     );
 
@@ -87,7 +87,7 @@ interface ILyonPrompt {
         // Addtional comment
         string comment;
         // The hash of the commitment/signature
-        bytes32 signature;
+        string signature;
         // The creation time of this reply.
         uint256 createTime;
     }
