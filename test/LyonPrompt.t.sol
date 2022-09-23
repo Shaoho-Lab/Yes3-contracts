@@ -141,10 +141,10 @@ contract LyonPromptTest is Test {
     }
 
     function testqueryAllPromptByAddr() public {
-        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[0].templateId, 1);
-        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[0].id, 1);
-        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[1].templateId, 2);
-        assertEq(prmt.queryAllPromptByAddr(promptMinter1_1)[1].id, 1);
+        assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[0].templateId, 1);
+        assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[0].id, 1);
+        assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[1].templateId, 2);
+        assertEq(prmt.queryAllPromptByAddress(promptMinter1_1)[1].id, 1);
     }
 
     // check the template testing is correct
