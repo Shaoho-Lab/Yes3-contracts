@@ -14,10 +14,10 @@ contract LyonTemplate is ERC721("Lyon Template","LYNT"){
 
     struct templateMetaData{
         uint256 templateId;
-        address owner;
+        address ownerAddress;
         string question;
         string context;
-        uint256 timeStamp;
+        uint256 createTime;
         string templateURI; //Question recorded at Mint
     }
 

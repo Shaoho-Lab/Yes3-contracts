@@ -40,7 +40,7 @@ interface ILyonPrompt {
         uint256 indexed id,
         address indexed promptOwner,
         string question,
-        address replierAddr,
+        address replierAddress,
         string replyDetail,
         string comment,
         bytes32 signature,
