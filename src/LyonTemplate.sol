@@ -9,8 +9,9 @@ contract LyonTemplate is ERC721("Lyon Template","LYNT"){
     error Unauthorized();
 
     uint templateId = 1;
-    mapping(uint256 => templateMetaData) public ownershipRecord;
-    mapping(uint256 => uint256) public promptCount;
+    mapping(uint256 => templateMetaData) private _ownershipRecord;
+    mapping(uint256 => uint256) private _promptCount;
+    mapping(address => uint256[]) private _templateByAddress;
 
     struct templateMetaData{
         uint256 templateId;
@@ -23,7 +24,8 @@ contract LyonTemplate is ERC721("Lyon Template","LYNT"){
 
     function mintTemplate(string memory question, string memory context, string memory _templateURI) external {
         _safeMint(msg.sender, templateId);
-        ownershipRecord[templateId] = templateMetaData(templateId, msg.sender, question, context, block.timestamp, _templateURI);
+        _ownershipRecord[templateId] = templateMetaData(templateId, msg.sender, question, context, block.timestamp, _templateURI);
+        _templateByAddress[msg.sender].push(templateId);
         unchecked{
             ++templateId;
         }
@@ -31,15 +33,11 @@ contract LyonTemplate is ERC721("Lyon Template","LYNT"){
 
     function newPrompMinted(uint256 promptId) external {
         unchecked{
-            ++promptCount[promptId]; 
+            ++_promptCount[promptId]; 
         }
     }
 
-    function queryAllTemplates() external view returns (templateMetaData[] memory){
-        templateMetaData[] memory allTemplates = new templateMetaData[](templateId);
-        for(uint i = 1; i < templateId + 1; i++){
-            allTemplates[i - 1] = ownershipRecord[i];
-        }
-        return allTemplates;
+    function queryAllTemplatesByAddress(address owner) external view returns (uint256[] memory){
+        return _templateByAddress[owner];
     }
 }

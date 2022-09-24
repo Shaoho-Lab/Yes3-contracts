@@ -223,7 +223,7 @@ contract LyonPrompt is ILyonPrompt {
     /**
      * @dev Returns the id of prompts replied by `owner`.
      */
-    function queryAllRepliesByAddressess(address owner)
+    function queryAllRepliesByAddress(address owner)
         external
         view
         returns (Prompt[] memory)
