@@ -35,26 +35,9 @@ contract LyonTemplateTest is Test {
     }
 
     function testqueryAllTemplates() public {
-        // assertEq(tmpl.queryAllTemplates()[0].templateId, 1);
-        // assertEq(tmpl.queryAllTemplates()[0].ownerAddress, templateMinter1);
-        // assertEq(tmpl.queryAllTemplates()[0].question, "q");
-        // assertEq(tmpl.queryAllTemplates()[0].context, "c");
-        // assertEq(tmpl.queryAllTemplates()[0].createTime, 1);
-        // assertEq(tmpl.queryAllTemplates()[0].templateURI, "template 1 URI");
-
-        // assertEq(tmpl.queryAllTemplates()[1].templateId, 2);
-        // assertEq(tmpl.queryAllTemplates()[1].ownerAddress, templateMinter2);
-        // assertEq(tmpl.queryAllTemplates()[1].question, "q");
-        // assertEq(tmpl.queryAllTemplates()[1].context, "c");
-        // assertEq(tmpl.queryAllTemplates()[1].createTime, 1);
-        // assertEq(tmpl.queryAllTemplates()[1].templateURI, "template 2 URI");
-
-        // assertEq(tmpl.queryAllTemplates()[2].templateId, 3);
-        // assertEq(tmpl.queryAllTemplates()[2].ownerAddress, templateMinter2);
-        // assertEq(tmpl.queryAllTemplates()[2].question, "q");
-        // assertEq(tmpl.queryAllTemplates()[2].context, "c");
-        // assertEq(tmpl.queryAllTemplates()[2].createTime, 1);
-        // assertEq(tmpl.queryAllTemplates()[2].templateURI, "template 2 URI");
+        assertEq(tmpl.queryAllTemplatesByAddress(templateMinter1)[0], 1);
+        assertEq(tmpl.queryAllTemplatesByAddress(templateMinter2)[0], 2);
+        assertEq(tmpl.queryAllTemplatesByAddress(templateMinter2)[1], 3);
     }
 
     // =============================================================

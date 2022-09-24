@@ -31,12 +31,12 @@ contract LyonPromptTest is Test {
     function setUp() public {
         tmpl = new LyonTemplate();
         vm.prank(templateMinter1);
-        tmpl.mintTemplate("template 1 URI"); // templateId = 0
+        tmpl.mintTemplate("q1", "c1","template 1 URI"); // templateId = 0
 
         vm.prank(templateMinter2);
-        tmpl.mintTemplate("template 2 URI"); // templateId = 1
+        tmpl.mintTemplate("q2", "c2","template 2 URI"); // templateId = 1
         vm.prank(templateMinter2);
-        tmpl.mintTemplate("template 2 URI"); // templateId = 2
+        tmpl.mintTemplate("q3", "c3","template 3 URI"); // templateId = 2
 
         vm.prank(promptADMIN);
         prmt = new LyonPrompt();
@@ -54,24 +54,10 @@ contract LyonPromptTest is Test {
         prmt.safeMint(1, "question 2-2", "context2-2", replier1, "SBTURI 2-2");
     }
 
-    // check the template testing is correct
-    function testMintTemplate() public {
-        assertEq(tmpl.balanceOf(templateMinter1), 1);
-        assertEq(tmpl.balanceOf(templateMinter2), 2);
-        assertEq(tmpl.ownerOf(0), (templateMinter1));
-        assertEq(tmpl.ownerOf(1), (templateMinter2));
-        assertEq(tmpl.ownerOf(2), (templateMinter2));
-    }
-
-    // function testMintPrompt() public {
-    //     // ILyonPrompt.Prompt memory temp = ILyonPrompt.Prompt(1, 1);
-    //     // assertEq(prmt.ownerOf(temp), promptMinter2_1);
-    // }
-
     // check Prompt minting logic
     function testPromptTotalSupply() public {
-        assertEq(prmt.totalSupply(0), 3);
-        assertEq(prmt.totalSupply(1), 4);
+        assertEq(prmt.totalSupply(0), 2);
+        assertEq(prmt.totalSupply(1), 3);
     }
 }
 
