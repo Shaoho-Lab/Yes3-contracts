@@ -42,21 +42,33 @@ contract LyonTemplate is ERC721("Lyon Template", "LYNT") {
         }
     }
 
-    function setTokenURI(uint256 id, string memory templateURI)
-        external
-    {
-        require(_ownershipRecord[id].ownerAddress==msg.sender, "Not Authorized because you are not the owner");
-        _ownershipRecord[id].templateURI = templateURI;
-    }
-
-    function queryTokenURI(uint256 id) external view returns(string memory) {
-        return _ownershipRecord[id].templateURI;
-    }
-
     function newPrompMinted(uint256 promptId) external {
         unchecked {
             ++_promptCount[promptId];
         }
+    }
+
+    function tokenURI(uint256 id)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        _requireMinted(id);
+        return _ownershipRecord[id].templateURI;
+    }
+
+    function setTokenURI(uint256 id, string memory templateURI) external {
+        require(
+            _ownershipRecord[id].ownerAddress == msg.sender,
+            "Not Authorized because you are not the owner"
+        );
+        _ownershipRecord[id].templateURI = templateURI;
+    }
+
+    function queryTokenURI(uint256 id) external view returns (string memory) {
+        return _ownershipRecord[id].templateURI;
     }
 
     function queryAllTemplatesByAddress(address owner)
