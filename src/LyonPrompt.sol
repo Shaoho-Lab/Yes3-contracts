@@ -196,6 +196,7 @@ contract LyonPrompt is ILyonPrompt {
         promptInfo.replies[replierAddress] = replyInfo;
         promptInfo.keys.push(replierAddress);
 
+        _promptByOwner[replierAddress].push(promptId);
         emit RepliedToPrompt(
             promptId.templateId,
             promptId.id,
