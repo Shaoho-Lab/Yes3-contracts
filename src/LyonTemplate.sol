@@ -31,6 +31,14 @@ contract LyonTemplate is ERC721("Lyon Template","LYNT"){
         }
     }
 
+    function setTokenURI() external{
+
+    }
+
+    function queryTokenURI() external{
+        
+    }
+
     function newPrompMinted(uint256 promptId) external {
         unchecked{
             ++_promptCount[promptId]; 
